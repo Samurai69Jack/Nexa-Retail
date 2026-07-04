@@ -32,18 +32,6 @@ WHERE YEAR(Order_Date) = 2023
 GROUP BY Quarter
 ORDER BY Quarter;
 
-SELECT
-    CASE
-        WHEN source_month IN ('Jan_2023','Feb_2023','Mar_2023') THEN 'Q1'
-        WHEN source_month IN ('Apr_2023','May_2023','Jun_2023') THEN 'Q2'
-        WHEN source_month IN ('Jul_2023','Aug_2023','Sep_2023') THEN 'Q3'
-        WHEN source_month IN ('Oct_2023','Nov_2023','Dec_2023') THEN 'Q4'
-    END AS Quarter,
-    ROUND(sum(Total_Amount), 2) AS Total_Revenue
-FROM nexa_retail
-GROUP BY Quarter
-ORDER BY Quarter;
-
 -- Revenue trend across quarter reveals seasonal demand patterns, that helps 
 -- businesses plan inventory and staffing around peak months rather than spreading
 -- resources evenly
@@ -57,16 +45,6 @@ GROUP BY Customer_Name, City
 ORDER BY Total_Revenue DESC
 LIMIT 5;
 
-SELECT Customer_Name, City, Total_Revenue
-FROM (
-    SELECT Customer_Name, City,
-        ROUND(SUM(Total_Amount), 2) AS Total_Revenue,
-        RANK() OVER (ORDER BY SUM(Total_Amount) DESC) AS revenue_rank
-    FROM nexa_retail
-    GROUP BY Customer_Name, City
-) AS ranked_stores
-WHERE revenue_rank <= 5;
-
 -- These 5 stores are the stronghold of the Company,and no they are not located
 -- in the same city but rather spread out in 5 different cities altogether
 --
@@ -78,17 +56,6 @@ FROM nexa_retail
 GROUP BY Category
 ORDER BY Avg_Revenue_Per_Transaction DESC
 LIMIT 1;
-
-
-SELECT Category, Avg_Revenue_Per_Transaction
-FROM (
-    SELECT Category,
-        ROUND(AVG(Total_Amount), 2) AS Avg_Revenue_Per_Transaction,
-        RANK() OVER (ORDER BY AVG(Total_Amount) DESC) AS rnk
-    FROM nexa_retail
-    GROUP BY Category
-) AS ranked
-WHERE rnk = 1;
 
 -- the category Atta generates the most value per sale, making it a natural focus
 -- for premium shelf placement, cross selling or bundling with lower-margin items
@@ -113,7 +80,7 @@ FROM nexa_retail
 GROUP BY source_month
 ORDER BY MIN(Order_Date);
 
-
+-- or use the approach below:
 WITH monthly AS (
     SELECT 
         source_month,
@@ -150,6 +117,7 @@ select City, round(avg(Total_Amount),2) as Avg_Basket_Size from nexa_retail
 group by City
 order by Avg_Basket_Size desc;
 
+-- or: 
 
 SELECT * FROM (
     SELECT City, ROUND(AVG(Total_Amount), 2) AS Avg_Basket_Size, 'Highest' AS Rank_Label
@@ -169,6 +137,7 @@ SELECT * FROM (
     LIMIT 1
 ) AS lowest;
 
+-- OR: 
 
 WITH city_basket AS (
     SELECT City, ROUND(AVG(Total_Amount), 2) AS Avg_Basket_Size,
@@ -198,6 +167,7 @@ FROM nexa_retail
 GROUP BY Customer_Type
 ORDER BY Revenue_Per_Store DESC;
 
+-- OR: 
 
 SELECT Customer_Type, 
     ROUND(AVG(store_revenue), 2) AS Revenue_Per_Store
@@ -271,7 +241,7 @@ select round(sum(t.Total_Revenue)/max(tr.Total_Rev) *100,2) as Top_10_Percent_St
 from top_10_percent_stores t
 cross join total_rev tr;
 
-
+-- OR: 
 
 with store_revenue as (
 	select Customer_Name, sum(Total_Amount) as Revenue,
@@ -307,6 +277,8 @@ total_rev as (
 select round(sum(b.Revenue)/max(t.Total_Revenue)*100,2) as Percentage_of_Revenue_Lost
 from bottom_3 b cross join
 total_rev t;
+
+-- OR:
 
 with products_ranked as (
 	select Product_Name, sum(Total_Amount) as Revenue, rank()
