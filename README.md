@@ -9,9 +9,8 @@ A data analysis project built on real retail transaction data from NexaRetail, a
 
 ## 📁 What's in this Repository
 
-Nexa_Retail_Raw -> Raw Data, 16 excel files
-Nexa_Retail_Consolidated -> Consolidated excel file created after combining all of them
-Nexa_Retail_CSV.csv-> The raw dataset — 15,382 rows of sales transactions
+Nexa_Retail_Raw ->Zip file, Raw Data, 16 excel files
+Nexa_Retail_Consolidated -> Consolidated excel file cleaned dataset,15,382 rows of sales transactions
 Nexa_Retail_SQL.sql-> All SQL queries written to answer the 10 business questions
 NexaRetail_Answers_Archit_Verma.pdf-> Final report with results and plain-language business takeaways
 
