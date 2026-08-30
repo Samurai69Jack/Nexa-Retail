@@ -78,7 +78,7 @@ The EDA answered what's happening in the business. This notebook (NexaRetail_RFM
   - ~19,100 loyalty transaction records across 2,500 unique customers
   - Customers scored and bucketed into segments (Champions, At Risk, and others) based on how recently, how often, and how much they buy
 
-## 💡 Key Findings (RFM)
+### 💡 Key Findings (RFM)
   - 721 "Champions" — a relatively small slice of the customer base — drive roughly 52% of total loyalty revenue, making retention of this group a top priority.
   - 421 customers flagged "At Risk", representing a meaningful share of loyalty revenue exposure if they churn — a clear target list for win-back campaigns.
   - The loyalty base is top-heavy: a small number of high-value customers account for a disproportionate share of revenue, similar to the store-concentration pattern found in the SQL analysis.
@@ -91,7 +91,7 @@ NexaRetail's product team redesigned the loyalty app's registration page and ran
   - Segmented analysis by device type and traffic source
   - Explicit Simpson's paradox check to confirm the overall result isn't an aggregation artifact
 
-## 💡 Key Findings (A/B Test)
+### 💡 Key Findings (A/B Test)
   - Conversion rose from 2.74% (Control) to 3.60% (Treatment) — a +0.86 percentage point, +31.6% relative lift, statistically significant at p = 0.0136.
   - The lift held directionally across every device and every traffic channel tested — no segment reversed direction, ruling out Simpson's paradox.
   - Strongest, statistically confirmed gains were on mobile (~49% relative lift), the largest traffic segment; Google Ads traffic was the one channel showing essentially no lift.
