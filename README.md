@@ -2,6 +2,17 @@
 
 Exploratory data analysis of NexaRetail's sales data using MySQL and Python — covering revenue trends, store performance, seasonality, return-rate risk, and product insights. Extended with customer segmentation (RFM) and a full A/B test analysis for the NexaRetail loyalty app.
 
+## Project Overview
+
+This repo simulates a full analyst workflow on one consistent retail dataset, moving from diagnosis to action:
+
+  1. SQL — answer the concrete business questions a store manager would ask first
+  2. Python EDA — go deeper into revenue drivers, seasonality, and return risk
+  3. RFM Segmentation — find out who is driving that revenue, and who's at risk of leaving
+  4. A/B Testing — validate whether a product change (a registration page redesign) actually worked, or was just noise
+
+Each stage ends in a plain-language recommendation, not just a chart — the goal throughout is answers a manager or PM could act on, not just analysis for its own sake.
+
 ## 🛒 NexaRetail Sales Analysis
 
 A data analysis project built on real retail transaction data from NexaRetail, a fictional FMCG distributor operating across 10 cities in Maharashtra. The goal was to answer the business questions a real retail manager or business owner would actually care about — first in SQL, then extended with a full Python EDA, customer segmentation, and A/B test analysis.
@@ -74,14 +85,28 @@ A standalone 2-page summary of the three most important findings — each with i
 
 ## 🎯 RFM Segmentation: Who Are Our Best (and Riskiest) Customers?
 
-The EDA answered what's happening in the business. This notebook (NexaRetail_RFM.ipynb) answers who's driving it — segmenting NexaRetail's loyalty program members by Recency, Frequency, and Monetary value to separate high-value customers from ones at risk of churning.
-  - ~19,100 loyalty transaction records across 2,500 unique customers
-  - Customers scored and bucketed into segments (Champions, At Risk, and others) based on how recently, how often, and how much they buy
+The EDA answered *what's happening* in the business. `NexaRetail_RFM.ipynb` answers *who's driving it* — segmenting NexaRetail's 2,500 loyalty members by Recency, Frequency, and Monetary value (19,113 transactions, quartile-scored) into six named, business-readable segments, each with a revenue figure and a recommended action.
 
-### 💡 Key Findings (RFM)
-  - 721 "Champions" — a relatively small slice of the customer base — drive roughly 52% of total loyalty revenue, making retention of this group a top priority.
-  - 421 customers flagged "At Risk", representing a meaningful share of loyalty revenue exposure if they churn — a clear target list for win-back campaigns.
-  - The loyalty base is top-heavy: a small number of high-value customers account for a disproportionate share of revenue, similar to the store-concentration pattern found in the SQL analysis.
+### 💡 Segment Breakdown & Recommended Actions
+
+| Segment | Customers | % of Revenue | Recommended Action |
+|---|---|---|---|
+| **Champions** | 721 (28.8%) | **51.7%** | Reward with VIP benefits, early access, and referral incentives — protect this group above all else. |
+| **At Risk** | 421 (16.8%) | **34.9%** (~₹50.6M) | Launch a personalized win-back campaign with limited-time discounts — the single highest-leverage move available. |
+| **Need Attention** | 677 (27.1%) | 6.0% | Nurture with personalized recommendations to convert this large, low-value group toward Loyal. |
+| **Loyal** | 295 (11.8%) | — | Encourage higher spend via upselling and bundle offers. |
+| **Lost** | 315 (12.6%) | *combined* | Minimize spend — include only in broad awareness campaigns. |
+| **Hibernating** | 71 (2.8%) | **<3%** | Low-cost re-engagement only (reminder emails, light promotions). |
+
+### 🔎 At Risk Deep-Dive
+
+The brief specifically called for quantifying what's recoverable in the At Risk segment. The key finding: **At Risk customers look almost identical to Champions on frequency and spend — the only real difference is recency.** These are high-value customers who simply stopped buying recently (avg. 118 days since last purchase), not low-value customers to write off. That's exactly the profile a win-back campaign is built for, which is why this segment — not Hibernating or Lost — gets priority budget.
+
+- **721 Champions** drive 51.7% of revenue from just 28.8% of customers — losing this group would hurt more than losing any other segment.
+- **421 At Risk customers** hold ₹50.6M (34.9%) in still-recoverable revenue — the single largest revenue-recovery opportunity in the loyalty base.
+- **Lost + Hibernating** (386 customers combined) contribute under 3% of revenue — not worth active marketing spend.
+
+Full customer-level R/F/M scores and segment labels are exported to `NexaRetail_Segments.xlsx` for a campaign team to action directly.
 
 ## 🧪 A/B Testing: Did the New Registration Page Actually Win?
 NexaRetail's product team redesigned the loyalty app's registration page and ran a 30-day A/B test — 10,000 visitors, 50/50 Control vs. Treatment split. NexaRetail_ABTest.ipynb runs the full statistical analysis; NexaRetail_Verdict.pdf distills it into a 1-page ship/no-ship recommendation for a product manager.
