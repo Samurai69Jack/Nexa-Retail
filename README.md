@@ -1,19 +1,22 @@
 # Nexa-Retail
 
-Exploratory data analysis of NexaRetail's sales data using MySQL and Python — covering revenue trends, store performance, seasonality, return-rate risk, and product insights.
+Exploratory data analysis of NexaRetail's sales data using MySQL and Python — covering revenue trends, store performance, seasonality, return-rate risk, and product insights. Extended with customer segmentation (RFM) and a full A/B test analysis for the NexaRetail loyalty app.
 
 ## 🛒 NexaRetail Sales Analysis
 
-A data analysis project built on real retail transaction data from NexaRetail, a fictional FMCG distributor operating across 10 cities in Maharashtra. The goal was to answer the business questions a real retail manager or business owner would actually care about — first in SQL, then extended with a full Python EDA.
+A data analysis project built on real retail transaction data from NexaRetail, a fictional FMCG distributor operating across 10 cities in Maharashtra. The goal was to answer the business questions a real retail manager or business owner would actually care about — first in SQL, then extended with a full Python EDA, customer segmentation, and A/B test analysis.
 
 ## 📁 What's in this Repository
 
 - `Nexa_Retail_Raw` → Zip file, raw data, 16 excel files
 - `Nexa_Retail_Consolidated` → Consolidated excel file, cleaned dataset, 15,382 rows of sales transactions
 - `Nexa_Retail_SQL.sql` → All SQL queries written to answer the 10 business questions
-- `NexaRetail_Answers_Archit_Verma.pdf` → Final SQL report with results and plain-language business takeaways
+- `NexaRetail_insights_SQL.pdf` → Final SQL report with results and plain-language business takeaways
 - `NexaRetail_EDA_Portfolio.ipynb` → Python EDA notebook covering revenue drivers, monthly/weekly seasonality, return-rate analysis, and a Business Opportunity Matrix
-- `NexaRetail_Business_Observations.pdf` → 2-page summary of the 3 most consequential business observations from the Python EDA, each with a chart and a recommendation
+- `NexaRetail_Findings_Python.pdf` → 2-page summary of the 3 most consequential business observations from the Python EDA, each with a chart and a recommendation
+- `NexaRetail_RFM`→ Customer segmentation notebook using Recency, Frequency, Monetary (RFM) analysis on loyalty program data
+- `NexaRetail_ABtesting`→ Full A/B test analysis of a loyalty app registration page redesign, with significance testing and segmented results
+- `NexaRetail_Verdict`→ 1-page ship/no-ship verdict summarizing the A/B test for a product manager
 
 ## 📊 About the Dataset
 
@@ -67,7 +70,33 @@ The SQL project answered 10 targeted business questions. The Python notebook (`N
 - Rajkot's top revenue product, NexaGold Wheat Atta 5kg, carries the largest combined revenue-at-risk of any city's top product — a 40.3% return rate on a product worth 9.2% of the city's total revenue.
 - Basket size doesn't vary meaningfully by channel or store type — Online/Offline and Kirana/Supermarket customers buy about the same quantity per order.
 
-A standalone 2-page summary of the three most important findings — each with its own chart and recommendation — is available in `NexaRetail_Business_Observations.pdf`.
+A standalone 2-page summary of the three most important findings — each with its own chart and recommendation — is available in `NexaRetail_Findings_Python.pdf`.
+
+## 🎯 RFM Segmentation: Who Are Our Best (and Riskiest) Customers?
+
+The EDA answered what's happening in the business. This notebook (NexaRetail_RFM.ipynb) answers who's driving it — segmenting NexaRetail's loyalty program members by Recency, Frequency, and Monetary value to separate high-value customers from ones at risk of churning.
+  - ~19,100 loyalty transaction records across 2,500 unique customers
+  - Customers scored and bucketed into segments (Champions, At Risk, and others) based on how recently, how often, and how much they buy
+
+## 💡 Key Findings (RFM)
+  - 721 "Champions" — a relatively small slice of the customer base — drive roughly 52% of total loyalty revenue, making retention of this group a top priority.
+  - 421 customers flagged "At Risk", representing a meaningful share of loyalty revenue exposure if they churn — a clear target list for win-back campaigns.
+  - The loyalty base is top-heavy: a small number of high-value customers account for a disproportionate share of revenue, similar to the store-concentration pattern found in the SQL analysis.
+
+## 🧪 A/B Testing: Did the New Registration Page Actually Win?
+NexaRetail's product team redesigned the loyalty app's registration page and ran a 30-day A/B test — 10,000 visitors, 50/50 Control vs. Treatment split. NexaRetail_ABTest.ipynb runs the full statistical analysis; NexaRetail_Verdict.pdf distills it into a 1-page ship/no-ship recommendation for a product manager.
+
+  - Two-proportion z-test with p-value and 95% confidence interval for the conversion lift
+  - Absolute and relative effect size calculation
+  - Segmented analysis by device type and traffic source
+  - Explicit Simpson's paradox check to confirm the overall result isn't an aggregation artifact
+
+## 💡 Key Findings (A/B Test)
+  - Conversion rose from 2.74% (Control) to 3.60% (Treatment) — a +0.86 percentage point, +31.6% relative lift, statistically significant at p = 0.0136.
+  - The lift held directionally across every device and every traffic channel tested — no segment reversed direction, ruling out Simpson's paradox.
+  - Strongest, statistically confirmed gains were on mobile (~49% relative lift), the largest traffic segment; Google Ads traffic was the one channel showing essentially no lift.
+  - Verdict: ship the new page to 100% of users, while monitoring mobile performance and Google Ads conversion post-launch.
+
 
 ## 🛠️ Tools Used
 
@@ -87,8 +116,3 @@ Here's what the queries cover:
 - CROSS JOIN for percentage calculations
 - Date functions (QUARTER, YEAR, DATE_SUB)
 - Data cleaning (REPLACE, ALTER TABLE, type conversion)
-
-## 🚧 Coming Soon
-
-- 🔜 **RFM Segmentation** — Recency, Frequency, Monetary customer segmentation to identify high-value, at-risk, and churned customer/store groups.
-- 🔜 **A/B Testing** — A statistical testing framework to validate whether observed differences (e.g. channel performance, promotional impact) are actually significant or just noise.
