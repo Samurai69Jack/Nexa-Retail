@@ -1,6 +1,8 @@
 # Nexa-Retail
 
-Exploratory data analysis of NexaRetail's sales data using MySQL and Python — covering revenue trends, store performance, seasonality, return-rate risk, and product insights. Extended with customer segmentation (RFM) and a full A/B test analysis for the NexaRetail loyalty app.
+Exploratory data analysis of NexaRetail's sales data using MySQL and Python — covering revenue trends, store performance, seasonality, return-rate risk, and product insights. Extended with customer segmentation (RFM), a full A/B test analysis for the NexaRetail loyalty app, and an interactive Power BI executive dashboard.
+
+![NexaRetail Power BI Dashboard](images/nexaretail_dashboard.png)
 
 ## Project Overview
 
@@ -10,12 +12,13 @@ This repo simulates a full analyst workflow on one consistent retail dataset, mo
   2. Python EDA — go deeper into revenue drivers, seasonality, and return risk
   3. RFM Segmentation — find out who is driving that revenue, and who's at risk of leaving
   4. A/B Testing — validate whether a product change (a registration page redesign) actually worked, or was just noise
+  5. Power BI Dashboard — bring the sales picture together in one interactive view that leadership can filter and explore on their own
 
 Each stage ends in a plain-language recommendation, not just a chart — the goal throughout is answers a manager or PM could act on, not just analysis for its own sake.
 
 ## 🛒 NexaRetail Sales Analysis
 
-A data analysis project built on real retail transaction data from NexaRetail, a fictional FMCG distributor operating across 10 cities in Maharashtra. The goal was to answer the business questions a real retail manager or business owner would actually care about — first in SQL, then extended with a full Python EDA, customer segmentation, and A/B test analysis.
+A data analysis project built on real retail transaction data from NexaRetail, a fictional FMCG distributor operating across 10 cities in Maharashtra and Gujarat. The goal was to answer the business questions a real retail manager or business owner would actually care about — first in SQL, then extended with a full Python EDA, customer segmentation, A/B test analysis, and a Power BI dashboard.
 
 ## 📁 What's in this Repository
 
@@ -28,14 +31,17 @@ A data analysis project built on real retail transaction data from NexaRetail, a
 - `NexaRetail_RFM`→ Customer segmentation notebook using Recency, Frequency, Monetary (RFM) analysis on loyalty program data
 - `NexaRetail_ABtesting`→ Full A/B test analysis of a loyalty app registration page redesign, with significance testing and segmented results
 - `NexaRetail_Verdict`→ 1-page ship/no-ship verdict summarizing the A/B test for a product manager
+- `NexaRetail_Dashboard.pbix` → Interactive Power BI executive dashboard (Jan 2023 – Jun 2024)
+- `images/nexaretail_dashboard.png` → Dashboard screenshot used in this README
 
 ## 📊 About the Dataset
 
-- 15,382 sales transactions
-- 40 stores across 10 cities in Maharashtra
+- 15,382 sales transactions (full consolidated dataset)
+- 40 stores across 10 cities in Maharashtra and Gujarat
 - 2 store types — Kirana stores and Supermarkets
-- Covers 2023–2024 sales data
-- Each row contains: Order Date, Store Name, City, Product, Category, Quantity Sold, and Revenue
+- Covers Jan 2023 – Jun 2024 sales data
+- Each row contains: Order Date, Store Name, City, State, Product, Category, Quantity Sold, and Revenue
+- Note: the Python EDA runs on a filtered extract of 11,875 orders covering Jan–Dec 2023, so its totals differ from the SQL and dashboard figures, which use the full dataset
 
 ## ❓ SQL: Business Questions Answered
 
@@ -64,7 +70,7 @@ Q10. If the 3 weakest products were removed, how much revenue would be lost?
 
 ## 📓 Python EDA: Extended Analysis
 
-The SQL project answered 10 targeted business questions. The Python notebook (`NexaRetail_EDA_Portfolio.ipynb`) goes deeper — full exploratory analysis with polished, presentation-ready visuals — covering:
+The SQL project answered 10 targeted business questions. The Python notebook (`NexaRetail_EDA_Portfolio.ipynb`) goes deeper — full exploratory analysis with polished, presentation-ready visuals, run on a filtered extract of 11,875 orders (Jan–Dec 2023) — covering:
 
 - Revenue distribution across city, store type, category, and channel (online vs offline)
 - Monthly and weekly seasonality patterns
@@ -75,7 +81,7 @@ The SQL project answered 10 targeted business questions. The Python notebook (`N
 
 ### 💡 Key Findings (Python EDA)
 
-- Total revenue: ₹4.77 crore across 11,875 orders, with a 37.4% return rate — high enough to be a top operational priority.
+- Total revenue: ₹4.77 crore across 11,875 orders (filtered 2023 extract), with a 37.4% return rate — high enough to be a top operational priority.
 - Revenue is driven by order volume, not order value — average order value barely moves city to city, but order counts do.
 - Atta and Personal Care combine solid revenue share with the highest return rates of any category (~38–39%).
 - Rajkot's top revenue product, NexaGold Wheat Atta 5kg, carries the largest combined revenue-at-risk of any city's top product — a 40.3% return rate on a product worth 9.2% of the city's total revenue.
@@ -122,6 +128,37 @@ NexaRetail's product team redesigned the loyalty app's registration page and ran
   - Strongest, statistically confirmed gains were on mobile (~49% relative lift), the largest traffic segment; Google Ads traffic was the one channel showing essentially no lift.
   - Verdict: ship the new page to 100% of users, while monitoring mobile performance and Google Ads conversion post-launch.
 
+## 📈 Power BI Dashboard: Sales Performance & Business Intelligence
+
+The SQL, Python, RFM, and A/B work each answer a specific question. The Power BI dashboard (`NexaRetail_Dashboard.pbix`) pulls the sales story into a single executive overview covering Jan 2023 – Jun 2024, so a manager can slice the numbers themselves instead of waiting on a new query or notebook.
+
+![NexaRetail Power BI Dashboard](images/nexaretail_dashboard.png)
+
+Note: the dashboard is built on the full 15,382-transaction dataset, so its totals differ from the Python EDA, which uses a filtered Jan–Dec 2023 extract.
+
+### What's on the Dashboard
+
+| Metric | Value |
+|---|---|
+| Total Revenue | ₹59.86M |
+| Total Orders | 15.38K |
+| Total Customers (stores) | 40 |
+| Total Quantity Sold | 394K |
+
+- Total Revenue by Category — ranks the eight categories by revenue, with Atta clearly ahead, followed by Edible Oil and Dal.
+- Total Revenue by Product — shows which individual products carry the business; NexaGold Wheat products lead.
+- Total Revenue by State — compares Maharashtra and Gujarat, with Maharashtra contributing the larger share.
+- Total Revenue by Customer Type — Kirana stores account for 75.48% of revenue and Supermarkets for 24.52%.
+- Revenue vs Quantity Sold — a scatter plot showing that higher volume doesn't automatically mean higher revenue, since product price points differ widely.
+- Interactive filters — State (Gujarat / Maharashtra), Year (2023 / 2024), and Category (Atta, Beverages, Dal, Edible Oil, Household, Personal Care, Snacks, Spices). Every visual responds to these slicers.
+
+### 💡 Key Takeaways (Dashboard)
+
+- Atta is the revenue engine — it is the single largest category by a wide margin, matching the SQL finding that it is the highest-value category.
+- Kirana stores drive three-quarters of revenue — the business leans heavily on the traditional format, even though Supermarkets are more efficient per store.
+- Maharashtra contributes the larger share of revenue, but Gujarat is a substantial second market — state-level planning matters.
+- Revenue is concentrated in a handful of products — stock-outs on the top products carry outsized risk.
+- Volume does not equal revenue — products with similar quantities sold can differ several-fold in revenue, which supports pricing and premium-placement decisions over simply pushing more units.
 
 ## 🛠️ Tools Used
 
@@ -129,6 +166,7 @@ NexaRetail's product team redesigned the loyalty app's registration page and ran
 - MySQL Workbench — for managing the database and importing data
 - Python (Pandas, Matplotlib, Seaborn) — for the extended EDA notebook
 - Python (ReportLab) — for generating both PDF reports
+- Power BI — for the interactive executive dashboard
 
 ## 🧠 SQL Concepts Used
 
