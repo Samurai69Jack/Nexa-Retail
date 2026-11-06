@@ -6,7 +6,7 @@ Exploratory data analysis of NexaRetail's sales data using MySQL and Python — 
 
 ## Project Overview
 
-This repo simulates a full analyst workflow on one consistent retail dataset, moving from diagnosis to action:
+This repo simulates a full analyst workflow on NexaRetail's retail data, moving from diagnosis to action:
 
   1. SQL — answer the concrete business questions a store manager would ask first
   2. Python EDA — go deeper into revenue drivers, seasonality, and return risk
@@ -23,7 +23,7 @@ A data analysis project built on real retail transaction data from NexaRetail, a
 ## 📁 What's in this Repository
 
 - `Nexa_Retail_Raw` → Zip file, raw data, 16 excel files
-- `Nexa_Retail_Consolidated` → Consolidated excel file, cleaned dataset, 15,382 rows of sales transactions
+- `Nexa_Retail_Consolidated` → Consolidated excel file, cleaned dataset, 15,380 rows of sales transactions
 - `Nexa_Retail_SQL.sql` → All SQL queries written to answer the 10 business questions
 - `NexaRetail_insights_SQL.pdf` → Final SQL report with results and plain-language business takeaways
 - `NexaRetail_EDA_Portfolio.ipynb` → Python EDA notebook covering revenue drivers, monthly/weekly seasonality, return-rate analysis, and a Business Opportunity Matrix
@@ -31,17 +31,18 @@ A data analysis project built on real retail transaction data from NexaRetail, a
 - `NexaRetail_RFM`→ Customer segmentation notebook using Recency, Frequency, Monetary (RFM) analysis on loyalty program data
 - `NexaRetail_ABtesting`→ Full A/B test analysis of a loyalty app registration page redesign, with significance testing and segmented results
 - `NexaRetail_Verdict`→ 1-page ship/no-ship verdict summarizing the A/B test for a product manager
-- `NexaRetail_Dashboard.pbix` → Interactive Power BI executive dashboard (Jan 2023 – Jun 2024)
+- `NexaRetail_Dashboard.pbix` → Interactive Power BI executive dashboard built on the consolidated dataset
 - `images/nexaretail_dashboard.png` → Dashboard screenshot used in this README
 
 ## 📊 About the Dataset
 
-- 15,382 sales transactions (full consolidated dataset)
-- 40 stores across 10 cities in Maharashtra and Gujarat
-- 2 store types — Kirana stores and Supermarkets
-- Covers Jan 2023 – Jun 2024 sales data
-- Each row contains: Order Date, Store Name, City, State, Product, Category, Quantity Sold, and Revenue
-- Note: the Python EDA runs on a filtered extract of 11,875 orders covering Jan–Dec 2023, so its totals differ from the SQL and dashboard figures, which use the full dataset
+- 15,380 sales transactions, ₹5.99 crore total revenue (consolidated dataset used for SQL and the dashboard)
+- 40 store names, each trading in all 10 cities (400 store–city combinations)
+- 10 cities across 2 states — Maharashtra (Pune, Nagpur, Nashik, Solapur, Kolhapur, Aurangabad) and Gujarat (Ahmedabad, Surat, Vadodara, Rajkot)
+- 2 store types — Kirana stores (30) and Supermarkets (10)
+- Covers Jan 2023 – Jun 2024 across 16 monthly files (June 2023 and February 2024 are not in the source data)
+- Each row contains: Order Date, Store Name, Store Type, City, State, Product, Category, Quantity Sold, Unit Price, and Revenue
+- Note: the Python EDA uses a separate order-level dataset (11,875 orders, Jan–Dec 2023) that also includes channel and return fields, so its totals differ from the SQL and dashboard figures
 
 ## ❓ SQL: Business Questions Answered
 
@@ -58,19 +59,19 @@ Q10. If the 3 weakest products were removed, how much revenue would be lost?
 
 ### 💡 Key Findings (SQL)
 
-- Q3 (Jul–Sep) was the strongest quarter — over ₹1.2 crore in revenue, making it the most important period to have stock ready and promotions running.
+- Q3 (Jul–Sep) was the strongest quarter — about ₹1.22 crore in revenue, making it the most important period to have stock ready and promotions running. (Q2 looks weak only because June 2023 is missing from the data.)
 - Top 5 stores are spread across 5 different cities — a healthy sign that the business isn't depending too much on any one location.
 - Atta is the highest-value category — customers spend nearly ₹12,000 per purchase on average, making it the best candidate for premium placement.
-- August 2023 saw the sharpest revenue drop at -21% — worth investigating for causes like seasonal dips or supply issues.
-- Solapur customers spend the most per visit; Kolhapur the least — different cities need different strategies.
-- 10 Supermarkets are nearly matching the revenue of 30 Kirana stores — supermarkets are the more efficient format for future expansion.
-- 3 products are on a steady decline in sales volume — NexaCrunch Chips 100g, NexaCrunch Mixture 200g, and NexaGold Sunflower Oil 1L need attention.
-- Just 4 stores generate 11% of total revenue — losing even one could significantly hurt the business.
+- August 2023 saw the sharpest month-over-month revenue drop at -21% (October 2023 was close at -19%) — worth investigating for causes like seasonal dips or supply issues. Months next to the two missing months are excluded from the comparison.
+- Solapur customers spend the most per visit (~₹4,093); Kolhapur the least (~₹3,764) — a modest gap, but different cities may still need different strategies.
+- Kirana stores and Supermarkets earn almost the same revenue per store (~₹15.1 lakh vs ~₹14.7 lakh). Kirana stores bring in 75% of total revenue and Supermarkets 25%, in line with their share of stores — neither format is clearly more efficient.
+- The three products with the weakest average month-over-month change show no real decline on that measure. Comparing the first five and last five months of data, the clearest decliners are NexaCrunch Mixture 200g (-15%), NexaFresh Mango Juice 1L (-12%), and NexaGold Moong Dal 1kg (-9%) — worth watching.
+- The top 10% of stores (4 of 40) generate 11.2% of total revenue, and the single largest store is only 2.9% — revenue is spread evenly, so there is no single-store dependency risk.
 - Removing the bottom 3 products would only cost ~3% of revenue — a safe trade-off for freeing up space.
 
 ## 📓 Python EDA: Extended Analysis
 
-The SQL project answered 10 targeted business questions. The Python notebook (`NexaRetail_EDA_Portfolio.ipynb`) goes deeper — full exploratory analysis with polished, presentation-ready visuals, run on a filtered extract of 11,875 orders (Jan–Dec 2023) — covering:
+The SQL project answered 10 targeted business questions. The Python notebook (`NexaRetail_EDA_Portfolio.ipynb`) goes deeper — full exploratory analysis with polished, presentation-ready visuals, run on a separate order-level dataset of 11,875 orders (Jan–Dec 2023) that includes sales channel and return details — covering:
 
 - Revenue distribution across city, store type, category, and channel (online vs offline)
 - Monthly and weekly seasonality patterns
@@ -81,7 +82,7 @@ The SQL project answered 10 targeted business questions. The Python notebook (`N
 
 ### 💡 Key Findings (Python EDA)
 
-- Total revenue: ₹4.77 crore across 11,875 orders (filtered 2023 extract), with a 37.4% return rate — high enough to be a top operational priority.
+- Total revenue: ₹4.77 crore across 11,875 orders (returned orders are flagged, not removed from this total), with a 37.4% return rate — high enough to be a top operational priority.
 - Revenue is driven by order volume, not order value — average order value barely moves city to city, but order counts do.
 - Atta and Personal Care combine solid revenue share with the highest return rates of any category (~38–39%).
 - Rajkot's top revenue product, NexaGold Wheat Atta 5kg, carries the largest combined revenue-at-risk of any city's top product — a 40.3% return rate on a product worth 9.2% of the city's total revenue.
@@ -130,11 +131,9 @@ NexaRetail's product team redesigned the loyalty app's registration page and ran
 
 ## 📈 Power BI Dashboard: Sales Performance & Business Intelligence
 
-The SQL, Python, RFM, and A/B work each answer a specific question. The Power BI dashboard (`NexaRetail_Dashboard.pbix`) pulls the sales story into a single executive overview covering Jan 2023 – Jun 2024, so a manager can slice the numbers themselves instead of waiting on a new query or notebook.
+The SQL, Python, RFM, and A/B work each answer a specific question. The Power BI dashboard (`NexaRetail_Dashboard.pbix`) pulls the sales story into a single executive overview, so a manager can slice the numbers themselves instead of waiting on a new query or notebook. It is built on the consolidated dataset (Jan 2023 – Jun 2024, 16 months of data), the same data used for the SQL analysis.
 
 ![NexaRetail Power BI Dashboard](images/nexaretail_dashboard.png)
-
-Note: the dashboard is built on the full 15,382-transaction dataset, so its totals differ from the Python EDA, which uses a filtered Jan–Dec 2023 extract.
 
 ### What's on the Dashboard
 
@@ -145,20 +144,20 @@ Note: the dashboard is built on the full 15,382-transaction dataset, so its tota
 | Total Customers (stores) | 40 |
 | Total Quantity Sold | 394K |
 
-- Total Revenue by Category — ranks the eight categories by revenue, with Atta clearly ahead, followed by Edible Oil and Dal.
-- Total Revenue by Product — shows which individual products carry the business; NexaGold Wheat products lead.
-- Total Revenue by State — compares Maharashtra and Gujarat, with Maharashtra contributing the larger share.
+- Total Revenue by Category — ranks the eight categories by revenue, with Atta clearly ahead (43%), followed by Edible Oil (18%) and Dal (13%).
+- Total Revenue by Product — shows which individual products carry the business; NexaGold Wheat Atta 10kg alone contributes 19.5% of revenue.
+- Total Revenue by State — Maharashtra contributes ₹35.5M (59%) and Gujarat ₹24.4M (41%).
 - Total Revenue by Customer Type — Kirana stores account for 75.48% of revenue and Supermarkets for 24.52%.
-- Revenue vs Quantity Sold — a scatter plot showing that higher volume doesn't automatically mean higher revenue, since product price points differ widely.
+- Revenue vs Quantity Sold — a scatter plot by product showing that volume doesn't drive revenue: every product sells roughly 17K–20K units, but product revenue ranges from ₹0.4M to ₹11.7M.
 - Interactive filters — State (Gujarat / Maharashtra), Year (2023 / 2024), and Category (Atta, Beverages, Dal, Edible Oil, Household, Personal Care, Snacks, Spices). Every visual responds to these slicers.
 
 ### 💡 Key Takeaways (Dashboard)
 
-- Atta is the revenue engine — it is the single largest category by a wide margin, matching the SQL finding that it is the highest-value category.
-- Kirana stores drive three-quarters of revenue — the business leans heavily on the traditional format, even though Supermarkets are more efficient per store.
-- Maharashtra contributes the larger share of revenue, but Gujarat is a substantial second market — state-level planning matters.
-- Revenue is concentrated in a handful of products — stock-outs on the top products carry outsized risk.
-- Volume does not equal revenue — products with similar quantities sold can differ several-fold in revenue, which supports pricing and premium-placement decisions over simply pushing more units.
+- Atta is the revenue engine — 43% of total revenue, matching the SQL finding that Atta is the highest-value category.
+- Revenue is concentrated in a handful of products — the top 5 products generate 58% of revenue, so stock-outs on them carry outsized risk.
+- Maharashtra is the larger market (59% of revenue), but Gujarat is a substantial second market — state-level planning matters.
+- Kirana stores bring in three-quarters of revenue, in line with their 75% share of stores — per-store revenue is nearly identical across both formats.
+- Volume does not equal revenue — products with similar units sold differ up to 30x in revenue, which points to pricing and premium placement rather than simply pushing more units.
 
 ## 🛠️ Tools Used
 
