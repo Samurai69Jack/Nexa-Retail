@@ -189,42 +189,41 @@ ORDER BY Revenue_Per_Store DESC;
 
 -- Q8
 
-WITH units_per_month AS (
-    SELECT Product_Name, source_month,
-        MIN(Order_Date) AS month_date,
-        SUM(Quantity) AS Units_Sold
-    FROM nexa_retail
-    GROUP BY Product_Name, source_month
+WITH m AS (
+    SELECT Product_Name, MIN(Order_Date) AS d, SUM(Quantity) AS units
+    FROM nexa_retail GROUP BY Product_Name, source_month
 ),
-growth_vol AS (
-    SELECT Product_Name, source_month, Units_Sold,
-        LAG(Units_Sold) OVER (PARTITION BY Product_Name ORDER BY month_date) AS Prev_Units_Sold,
-        ROUND(
-            (Units_Sold - LAG(Units_Sold) OVER (PARTITION BY Product_Name ORDER BY month_date))
-            / LAG(Units_Sold) OVER (PARTITION BY Product_Name ORDER BY month_date) * 100
-        , 2) AS Rate_of_Decline_Incline
-    FROM units_per_month
-),
-product_avg_decline AS (
-    SELECT Product_Name,
-        ROUND(AVG(Rate_of_Decline_Incline), 2) AS Avg_Growth_Rate
-    FROM growth_vol
-    WHERE Rate_of_Decline_Incline IS NOT NULL  -- excludes first month (no previous to compare)
-    GROUP BY Product_Name
+r AS (
+    SELECT *, ROW_NUMBER() OVER (PARTITION BY Product_Name ORDER BY d) AS rn,
+              COUNT(*) OVER (PARTITION BY Product_Name) AS n
+    FROM m
 )
-SELECT Product_Name, Avg_Growth_Rate
-FROM product_avg_decline
-ORDER BY Avg_Growth_Rate ASC
-LIMIT 3;
-
--- These 3 products are losing demand despite pricing being the same,
--- which suggests that there is shift in customer preference rather than
--- price issue
--- there needs to be a change in how they are sold or handled in order to
--- prevent them from affecting the revenue
+SELECT Product_Name,
+       ROUND(AVG(CASE WHEN rn <= 5 THEN units END), 0) AS first_5_avg,
+       ROUND(AVG(CASE WHEN rn > n - 5 THEN units END), 0) AS last_5_avg,
+       ROUND((AVG(CASE WHEN rn > n - 5 THEN units END) / AVG(CASE WHEN rn <= 5 THEN units END) - 1) * 100, 1) AS pct_change
+FROM r GROUP BY Product_Name ORDER BY pct_change LIMIT 3;
 
 
 -- Q9
+
+ 
+
+WITH store_revenue AS (
+    SELECT Customer_Name, SUM(Total_Amount) AS Revenue,
+           DENSE_RANK() OVER (ORDER BY SUM(Total_Amount) DESC) AS rnk
+    FROM nexa_retail
+    GROUP BY Customer_Name
+),
+top_10 AS (
+    SELECT SUM(Revenue) AS top_store_rev
+    FROM store_revenue
+    WHERE rnk <= (SELECT CEIL(COUNT(*) * 0.10) FROM store_revenue)
+)
+SELECT ROUND(top_store_rev / (SELECT SUM(Total_Amount) FROM nexa_retail) * 100, 2) AS Top_10_Percent_Revenue_Share
+FROM top_10;
+
+-- OR:
 
 with top_10_percent_stores as (
 	select Customer_Name, sum(Total_Amount) as Total_Revenue
@@ -240,28 +239,6 @@ select sum(Total_Amount) as Total_Rev from nexa_retail
 select round(sum(t.Total_Revenue)/max(tr.Total_Rev) *100,2) as Top_10_Percent_Stores_Revenue_Share
 from top_10_percent_stores t
 cross join total_rev tr;
-
--- OR: 
-
-with store_revenue as (
-	select Customer_Name, sum(Total_Amount) as Revenue,
-    rank() over(order by sum(Total_Amount) desc) as rnk
-    from nexa_retail
-    group by Customer_Name
-),
-total_rev as (
-	select sum(Total_Amount) as Total_Revenue from nexa_retail
-),
-top_10 as (
-	select sum(Revenue) as top_store_rev from store_revenue
-    where rnk<=(select ceil(count(Customer_Name)*0.10) from store_revenue)
-)
-select round(t.top_store_rev/tt.Total_Revenue*100,2) as Top_10_Percent_Store_Revenu_Share
-from top_10 t cross join total_rev tt;
-
--- The top 10% stores generate close to 11% Revenue which is a good number but also
--- highlights a dependency risk that if even one of these stores is affected,
--- the overall revenue would take a big hit of atleast 3-4%
 
 
 
